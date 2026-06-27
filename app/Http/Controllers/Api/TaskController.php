@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Task;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -12,12 +15,13 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
-      return response()->json([
+    $tasks = Task::latest()->get();
+
+    return response()->json([
         'success' => true,
-        'message' => 'Task API Working Successfully 🚀',
-        'data' => []
-    ]);
+        'message' => 'Tasks fetched successfully.',
+        'data' => $tasks,
+    ], 200);
     }
 
     /**
@@ -31,17 +35,26 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
-        //
-    }
+    $task = Task::create($request->validated());
 
+    return response()->json([
+        'success' => true,
+        'message' => 'Task created successfully.',
+        'data' => $task,
+    ], 201);
+    }
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Task $task)
     {
-        //
+    return response()->json([
+        'success' => true,
+        'message' => 'Task fetched successfully.',
+        'data' => $task,
+    ]);
     }
 
     /**
@@ -55,16 +68,26 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
-    }
+    $task->update($request->validated());
 
+    return response()->json([
+        'success' => true,
+        'message' => 'Task updated successfully.',
+        'data' => $task,
+    ]);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task deleted successfully.',
+        ]);
     }
 }
