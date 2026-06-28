@@ -1,6 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\Auth\GoogleController;
+Route::post('/register',[AuthController::class,'register']);
+Route::post('/login',[AuthController::class,'login']);
 
-Route::apiResource('tasks', TaskController::class);
+Route::middleware('auth:sanctum')->group(function(){
+
+    Route::get('/me',[AuthController::class,'me']);
+
+    Route::post('/logout',[AuthController::class,'logout']);
+
+    Route::apiResource('tasks',TaskController::class);
+
+});
+
+
+Route::get('/auth/google', [GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
